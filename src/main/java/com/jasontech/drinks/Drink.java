@@ -9,7 +9,6 @@ public class Drink {
     private int rating;
     // list of ingredients
 
-
     public Drink(int id, String name, int sweetnessLevel, int rating) {
         this.id = id;
         this.name = name;
