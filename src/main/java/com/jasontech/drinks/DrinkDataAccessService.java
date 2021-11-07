@@ -1,55 +1,64 @@
 package com.jasontech.drinks;
 
+
+import org.flywaydb.core.internal.jdbc.JdbcTemplate;
+import org.flywaydb.core.internal.jdbc.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
-public class DrinkDataAccessService {
+@Repository("postgres")
+public class DrinkDataAccessService implements DrinkDAO {
 
-    private List<Drink> db = new ArrayList<>();
+    private JdbcTemplate jdbcTemplate;
 
-    public DrinkDataAccessService() {
-        db.add(new Drink(1,"mojito", 6, 8));
-        db.add(new Drink(2,"pina colada", 9, 8));
+    public DrinkDataAccessService(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
+    @Override
     public List<Drink> getAllDrinks() {
-        return db;
+        String sql = """
+                SELECT id, name , age
+                FROM person
+                """;
+        List<Drink> drinks = jdbcTemplate.query(sql, new DrinkRowMapper());
+        return drinks;
+        throw new UnsupportedOperationException("not implemented");
     }
 
+    @Override
+    public Optional<Drink> selectDrinkById(int id) {
+//        return Optional.empty();
+        throw new UnsupportedOperationException("not implemented");
+    }
+
+
+    @Override
     public int insertNewDrink(Drink drink) {
-        db.add(drink);
-        return 1;
+
+        String sql = """
+              INSERT INTO drink(drinkname, sweetness, rating)
+              VALUES(?, ?, ?);
+                """;
+        return jdbcTemplate.update(
+                sql,
+                drink.getName(),
+                drink.getSweetnessLevel(),
+                drink.getRating()
+        );
     }
 
-    public void setDb(List<Drink> db) {
-        this.db = db;
-    }
-
+    @Override
     public int deleteDrink(int id) {
-        Optional<Drink> drink = getAllDrinks()
-                .stream()
-                .filter(d -> d.getId() == id)
-                .findFirst();
-
-        drink.ifPresent(d -> db.remove(d));
-        return 1;
+//        return 0;
+        throw new UnsupportedOperationException("not implemented");
     }
 
-    public void updateDrink(int id, Drink drink) {
-        Optional<Drink> drinkUpdate = getAllDrinks()
-                .stream()
-                .filter(d -> d.getId() == id)
-                .findFirst();
-        drinkUpdate.ifPresent(d -> db.remove(d));
-        drinkUpdate.ifPresent(d -> db.add(drink));
+    @Override
+    public int updateDrink(int id, Drink drink) {
+//        return 0;
+        throw new UnsupportedOperationException("not implemented");
     }
-
-//    public void insertDrink(Drink drink) {
-//        db.add(drink);
-//    }
-
 }
